@@ -1,15 +1,20 @@
-// Configuración principal de Express
+// Importa Express
 const express = require('express');
-require('dotenv').config();
 
+// Crea la app
 const app = express();
 
-// Middleware para leer JSON
+// Permite recibir datos JSON en requests
 app.use(express.json());
 
-// Rutas
-app.use('/api', require('./routes/cobrador.routes'));
-app.use('/api', require('./routes/cliente.routes'));
-app.use('/api', require('./routes/credito.routes'));
+// Ruta base para verificar que la API funciona
+app.get('/', (req, res) => {
+    res.send('API de créditos funcionando');
+});
+
+// Rutas separadas por recurso
+app.use('/api/cobradores', require('./routes/cobrador.routes'));
+app.use('/api/clientes', require('./routes/cliente.routes'));
+app.use('/api/creditos', require('./routes/credito.routes'));
 
 module.exports = app;
