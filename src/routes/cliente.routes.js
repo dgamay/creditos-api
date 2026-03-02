@@ -23,7 +23,7 @@ router.post('/', ctrl.create);
 router.get('/', ctrl.getByCobrador);
 
 // Obtener un cliente específico por su ID
-router.get('/:id', ctrl.getById);
+//router.get('/:id', ctrl.getById);
 
 // Actualizar un cliente por ID
 router.put('/:id', ctrl.update);
