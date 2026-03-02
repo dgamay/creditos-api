@@ -16,7 +16,7 @@ exports.getByCobrador = async (req, res) => {
     res.json(clientes);
 };
 
-/*/Actualizar cliente
+/*Actualizar cliente
 exports.update = async (req, res) => {
   try {
     const { id } = req.params;
