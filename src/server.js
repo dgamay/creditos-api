@@ -1,4 +1,4 @@
-// Carga variables de entorno
+/* // Carga variables de entorno
 require('dotenv').config();
 
 // Importa app express
@@ -19,6 +19,31 @@ const startServer = async () => {
     // Inicia servidor HTTP
     app.listen(PORT, () => {
         console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    });
+};
+
+// Ejecuta inicio
+startServer();
+ */
+
+
+// Carga variables de entorno
+require('dotenv').config();
+
+// Importa app express
+const app = require('./app');
+
+// Puerto del servidor
+const PORT = process.env.PORT || 3000;
+
+// Función para iniciar servidor
+const startServer = async () => {
+    console.log('🔄 Iniciando servidor...');
+    console.log('📡 Modo multitenant - Las BD se conectarán según el header X-Tenant-ID');
+    
+    // Inicia servidor HTTP
+    app.listen(PORT, () => {
+        console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
     });
 };
 

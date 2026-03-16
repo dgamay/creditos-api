@@ -1,4 +1,4 @@
-const app = require('../src/app');
+/* const app = require('../src/app');
 const conectarDB = require('../src/config/database');
 
 let isConnected = false;
@@ -13,3 +13,14 @@ module.exports = async (req, res) => {
 
     return app(req, res);
 };
+
+
+ */
+
+// api/index.js
+require('dotenv').config();
+const app = require('../src/app');
+
+// En Vercel serverless, simplemente exportamos la app
+// Las conexiones por tenant se manejan en database.middleware.js
+module.exports = app;

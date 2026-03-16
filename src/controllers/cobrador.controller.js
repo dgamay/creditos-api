@@ -1,31 +1,48 @@
-// Importa modelo
-const Cobrador = require('../models/cobrador.model');
+const getCobradorModel = require('../models/cobrador.model');
 
-// Crear cobrador
 exports.create = async (req, res) => {
     try {
-        // Crea objeto usando datos enviados
+        const Cobrador = getCobradorModel(req.db);
         const nuevo = new Cobrador(req.body);
-
-        // Guarda en MongoDB
         await nuevo.save();
-
-        // Responde con objeto creado
         res.status(201).json(nuevo);
-
     } catch (error) {
-
-        // Si falla, devuelve error
         res.status(500).json({ error: error.message });
     }
 };
 
-// Obtener todos los cobradores
 exports.getAll = async (req, res) => {
+    try {
+        const Cobrador = getCobradorModel(req.db);
+        const data = await Cobrador.find();
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
 
-    // Busca todos en colección
-    const data = await Cobrador.find();
+exports.update = async (req, res) => {
+    try {
+        const Cobrador = getCobradorModel(req.db);
+        const actualizado = await Cobrador.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true }
+        );
+        if (!actualizado) return res.status(404).json({ error: 'Cobrador no encontrado' });
+        res.json(actualizado);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
 
-    // Devuelve resultado
-    res.json(data);
+exports.delete = async (req, res) => {
+    try {
+        const Cobrador = getCobradorModel(req.db);
+        const eliminado = await Cobrador.findByIdAndDelete(req.params.id);
+        if (!eliminado) return res.status(404).json({ error: 'Cobrador no encontrado' });
+        res.json({ message: 'Cobrador eliminado exitosamente' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };

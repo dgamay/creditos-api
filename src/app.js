@@ -1,20 +1,47 @@
-// Importa Express
 const express = require('express');
+const cors = require('cors');
+const tenantMiddleware = require('./middlewares/tenant.middleware');
+const databaseMiddleware = require('./middlewares/database.middleware');
 
-// Crea la app
 const app = express();
 
-// Permite recibir datos JSON en requests
+const corsOptions = {
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:3002',
+    'https://creditos-frontend-djb3ao61q-dgamays-projects.vercel.app',
+    /https:\/\/creditos-frontend.*\.vercel\.app$/,
+  ],
+  methods: ['GET', 'POST','PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-ID', 'X-Admin-Secret'],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
+app.options('/{*path}', cors(corsOptions));
 app.use(express.json());
 
-// Ruta base para verificar que la API funciona
+// ✅ Rutas admin — van ANTES del tenantMiddleware
+// No necesitan X-Tenant-ID, tienen su propio middleware
+app.use('/api/admin', require('./routes/admin.routes'));
+
+// Rutas normales — requieren X-Tenant-ID
+app.use('/api', tenantMiddleware);
+app.use('/api', databaseMiddleware);
+
 app.get('/', (req, res) => {
-    res.send('API de créditos funcionando');
+  res.send('API de créditos funcionando (Modo Multitenant)');
 });
 
-// Rutas separadas por recurso
 app.use('/api/cobradores', require('./routes/cobrador.routes'));
 app.use('/api/clientes', require('./routes/cliente.routes'));
 app.use('/api/creditos', require('./routes/credito.routes'));
+
+app.use((err, req, res, next) => {
+  console.error('🔥 Error no manejado:', err);
+  res.status(500).json({ error: 'Error interno del servidor' });
+});
 
 module.exports = app;
