@@ -35,6 +35,8 @@ app.get('/', (req, res) => {
   res.send('API de créditos funcionando (Modo Multitenant)');
 });
 
+
+app.use('/api/auth', require('./routes/auth.routes')); 
 app.use('/api/cobradores', require('./routes/cobrador.routes'));
 app.use('/api/clientes', require('./routes/cliente.routes'));
 app.use('/api/creditos', require('./routes/credito.routes'));
