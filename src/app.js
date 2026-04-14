@@ -26,6 +26,7 @@ app.use(express.json());
 // ✅ Rutas admin — van ANTES del tenantMiddleware
 // No necesitan X-Tenant-ID, tienen su propio middleware
 app.use('/api/admin', require('./routes/admin.routes'));
+app.use('/api/webhook', require('./routes/webhook.routes'));
 
 // Rutas normales — requieren X-Tenant-ID
 app.use('/api', tenantMiddleware);
@@ -40,6 +41,7 @@ app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/cobradores', require('./routes/cobrador.routes'));
 app.use('/api/clientes', require('./routes/cliente.routes'));
 app.use('/api/creditos', require('./routes/credito.routes'));
+// Webhook de Telegram — sin middlewares de tenant ni admin
 
 app.use((err, req, res, next) => {
   console.error('🔥 Error no manejado:', err);

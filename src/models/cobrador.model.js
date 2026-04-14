@@ -1,4 +1,4 @@
-// ============================================
+/* // ============================================
 // MODELO DE COBRADOR - BACKEND
 // src/models/cobrador.model.js
 // Actualizado para soportar autenticación
@@ -67,6 +67,54 @@ cobradorSchema.methods.compararPassword = async function(passwordIngresada) {
 // @param {mongoose.Connection} connection
 // @returns {mongoose.Model}
 // ============================================
+const getCobradorModel = (connection) => {
+  if (connection.models.Cobrador) {
+    return connection.models.Cobrador;
+  }
+  return connection.model('Cobrador', cobradorSchema);
+};
+
+module.exports = getCobradorModel; */
+
+// ============================================
+// MODELO DE COBRADOR - BACKEND
+// src/models/cobrador.model.js
+// ============================================
+
+const mongoose = require('mongoose');
+
+const cobradorSchema = new mongoose.Schema({
+  nombre: {
+    type: String,
+    required: [true, 'El nombre es obligatorio'],
+    trim: true
+  },
+  cedula: {
+    type: String,
+    required: [true, 'La cédula es obligatoria'],
+    unique: true,
+    trim: true
+  },
+  direccion: {
+    type: String,
+    trim: true
+  },
+  celular: {
+    type: String,
+    required: [true, 'El celular es obligatorio'],
+    trim: true
+  },
+  // ✅ CAMPO NUEVO — se llena cuando el cobrador
+  // se vincula con el bot de Telegram
+  telegram_chat_id: {
+    type: String,
+    default: null
+  }
+}, {
+  timestamps: true,
+  versionKey: false
+});
+
 const getCobradorModel = (connection) => {
   if (connection.models.Cobrador) {
     return connection.models.Cobrador;
