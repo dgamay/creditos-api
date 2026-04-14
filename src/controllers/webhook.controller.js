@@ -272,11 +272,15 @@ const mostrarCliente = async (chatId, tenantId, cedulaCliente) => {
 // Recibe el update de Telegram y lo enruta
 // ============================================
 exports.procesarMensaje = async (req, res) => {
-  // Responder a Telegram inmediatamente — evita reintentos
   res.sendStatus(200);
 
   try {
+    // ✅ LOG TEMPORAL — verificar variables de entorno
+    console.log('🔑 BOT_TOKEN existe:', !!process.env.BOT_TOKEN);
+    console.log('🔑 BOT_TOKEN primeros 10 chars:', process.env.BOT_TOKEN?.substring(0, 10));
+
     const update = req.body;
+    console.log('📨 Update recibido:', JSON.stringify(update));    
 
     // Ignorar updates sin mensaje
     if (!update.message && !update.callback_query) return;
