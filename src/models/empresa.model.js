@@ -42,6 +42,19 @@ const empresaSchema = new mongoose.Schema({
       'El formato del email no es válido'
     ]
   },
+   admin_email: {
+    type: String,
+    trim: true,
+    lowercase: true,
+    default: null
+  },
+
+  
+  // Se llena cuando el admin escribe /adminstart al bot
+  admin_telegram_chat_id: {
+    type: String,
+    default: null
+  },
 
   // Estado de la empresa — solo las activas pueden hacer login
   activa: {
