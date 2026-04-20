@@ -474,12 +474,40 @@ exports.procesarMensaje = async (req, res) => {
       };
 
       await telegramService.responder(chatId,
-        `🎉 <b>¡Vinculado como administrador!</b>\n\n` +
-        `Empresa: <b>${sesion.nombreEmpresa}</b>\n\n` +
-        `Recibirás notificaciones y solicitudes de edición aquí.`
-      );
-      return res.sendStatus(200);
+  `🎉 <b>¡Vinculado como administrador!</b>\n\n` +
+  `Empresa: <b>${sesion.nombreEmpresa}</b>\n\n` +
+  `Recibirás notificaciones y solicitudes de edición aquí.\n\n` +
+  // ✅ MENÚ DEL ADMIN — se muestra al vincularse
+  `━━━━━━━━━━━━━━━━━━\n` +
+  `🔐 <b>Menú Administrador</b>\n` +
+  `━━━━━━━━━━━━━━━━━━\n\n` +
+  `<b>— Cobradores —</b>\n` +
+  `/mis_cobradores — Ver cobradores activos\n\n` +
+  `<b>— Reportes —</b>\n` +
+  `/reporte — Resumen de cartera\n\n` +
+  `<b>— Cuenta —</b>\n` +
+  `/adminstart — Reconectar cuenta\n` +
+  `/ayuda_admin — Ver este menú`
+);
+return res.sendStatus(200);
     }
+
+    // /ayuda_admin — menú del administrador
+    if (texto === '/ayuda_admin') {
+      await telegramService.responder(chatId,
+    `━━━━━━━━━━━━━━━━━━\n` +
+    `🔐 <b>Menú Administrador</b>\n` +
+    `━━━━━━━━━━━━━━━━━━\n\n` +
+    `<b>— Cobradores —</b>\n` +
+    `/mis_cobradores — Ver cobradores activos\n\n` +
+    `<b>— Reportes —</b>\n` +
+    `/reporte — Resumen de cartera\n\n` +
+    `<b>— Cuenta —</b>\n` +
+    `/adminstart — Reconectar cuenta\n` +
+    `/ayuda_admin — Ver este menú`
+  );
+  return res.sendStatus(200);
+}
 
     // ============================================
     // FLUJO VINCULACIÓN COBRADOR
