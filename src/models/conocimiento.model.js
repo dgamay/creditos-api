@@ -1,18 +1,30 @@
 // models/conocimiento.model.js
 const mongoose = require('mongoose');
 
+// ── Esquema del documento principal (metadatos) ──
 const documentoSchema = new mongoose.Schema({
-    titulo:       { type: String, required: true, trim: true },
-    contenido:    { type: String, required: true },
-    categoria:    { type: String, enum: ['política', 'faq', 'manual', 'otro'], default: 'otro' },
-    embedding:    { type: [Number], default: null },  // Vector de 384 dimensiones
-    metadata:     { type: mongoose.Schema.Types.Mixed }  // Datos adicionales (ej. autor, área)
+    titulo:    { type: String, required: true, trim: true },
+    categoria: { type: String, enum: ['política', 'faq', 'manual', 'otro'], default: 'otro' },
+    metadata:  { type: mongoose.Schema.Types.Mixed }
 }, { timestamps: true, versionKey: false });
 
-// El modelo se obtiene por conexión (multi-tenant)
+// ── Esquema de los chunks (fragmentos con embedding) ──
+const chunkSchema = new mongoose.Schema({
+    documento_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Conocimiento', required: true },
+    contenido:    { type: String, required: true },
+    embedding:    { type: [Number], required: true },
+    orden:        { type: Number, required: true }
+}, { timestamps: true, versionKey: false });
+
+// ── Funciones que devuelven el modelo según la conexión activa ──
 const getConocimientoModel = (connection) => {
     if (connection.models.Conocimiento) return connection.models.Conocimiento;
     return connection.model('Conocimiento', documentoSchema);
 };
 
-module.exports = getConocimientoModel;
+const getChunkModel = (connection) => {
+    if (connection.models.ConocimientoChunk) return connection.models.ConocimientoChunk;
+    return connection.model('ConocimientoChunk', chunkSchema);
+};
+
+module.exports = { getConocimientoModel, getChunkModel };

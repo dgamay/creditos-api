@@ -1,5 +1,5 @@
 // services/ingestion.service.js
-const pdfParse = require('pdf-parse');
+const pdfParse = require('pdf-parse').default || require('pdf-parse');
 const { chunkText } = require('../utils/chunkText');
 const { generarEmbedding } = require('../utils/embeddings');
 const { getConocimientoModel, getChunkModel } = require('../models/conocimiento.model');

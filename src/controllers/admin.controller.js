@@ -10,7 +10,7 @@
 const getEmpresaModel = require('../models/empresa.model');
 const { getAdminConnection, getTenantConnection } = require('../config/database');
 const { ingestDocument } = require('../services/ingestion.service');
-const { getTenantConnection } = require('../config/database');
+//const { getTenantConnection } = require('../config/database');
 
 // ============================================
 // VERIFICAR ACCESO ADMIN
