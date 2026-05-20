@@ -11,6 +11,10 @@ const getCreditoModel = require('../models/credito.model');
 const getClienteModel = require('../models/cliente.model');
 const getEmpresaModel = require('../models/empresa.model');
 
+
+
+const { buscarConocimiento } = require('../services/conocimiento.service');
+
 // ============================================
 // SESIONES TEMPORALES EN MEMORIA
 // Guarda el estado de conversación por chatId
@@ -368,6 +372,41 @@ const procesarCallback = async (callbackQuery) => {
 
   // Eliminar solicitud procesada
   delete solicitudesEdicion[solicitudId];
+};
+
+// ============================================
+// RESPUESTA CON BASE DE CONOCIMIENTO (RAG)
+// ============================================
+const responderConConocimiento = async (chatId, tenantId, query) => {
+  try {
+    const connection = await getTenantConnection(tenantId);
+    const resultados = await buscarConocimiento(connection, query, { limit: 3 });
+
+    if (!resultados || resultados.length === 0) {
+      await telegramService.responder(chatId,
+        '🤔 No encontré información relacionada en la base de conocimiento.'
+      );
+      return;
+    }
+
+    const mejor = resultados[0];
+    let respuesta = `<b>📚 ${mejor.titulo}</b>\n`;
+
+    if (mejor.chunks_relevantes && mejor.chunks_relevantes.length > 0) {
+      // Tomamos el chunk más relevante
+      respuesta += mejor.chunks_relevantes[0].contenido.substring(0, 400) + '…';
+    } else if (mejor.contenido) {
+      respuesta += mejor.contenido.substring(0, 400) + '…';
+    } else {
+      respuesta += 'No hay contenido disponible.';
+    }
+
+    respuesta += '\n\n<i>¿Te fue útil?</i>';
+    await telegramService.responder(chatId, respuesta);
+  } catch (error) {
+    console.error('❌ Error en búsqueda de conocimiento:', error);
+    await telegramService.responder(chatId, '⚠️ Ocurrió un error al buscar información.');
+  }
 };
 
 // ============================================
@@ -951,6 +990,14 @@ return res.sendStatus(200);
     }
 
     // Mensaje no reconocido
+       // Si el usuario está vinculado y el texto NO es un comando (no empieza con '/')
+    // asumimos que es una pregunta para la base de conocimiento.
+    if (!texto.startsWith('/')) {
+      await responderConConocimiento(chatId, tenantId, texto);
+      return res.sendStatus(200);
+    }
+
+    // Si es un comando no reconocido, mostrar ayuda
     await telegramService.responder(chatId,
       '🤔 No entendí ese comando.\nUsa /ayuda para ver los comandos disponibles.'
     );

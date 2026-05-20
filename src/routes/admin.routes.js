@@ -8,7 +8,9 @@
 const router = require('express').Router();
 const ctrl = require('../controllers/admin.controller');
 const adminMiddleware = require('../middlewares/admin.middleware');
-
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } }); 
+const adminController = require('../controllers/admin.controller');
 // Aplicar adminMiddleware a TODAS las rutas de este router
 // Ninguna ruta es accesible sin el secret correcto
 router.use(adminMiddleware);
@@ -30,5 +32,7 @@ router.delete('/empresas/:id', ctrl.deleteEmpresa);
 
 // GET /api/admin/stats — estadísticas globales
 router.get('/stats', ctrl.getStats);
+// POST ruta para ingesta de documentos
+router.post('/ingest', upload.single('file'), adminController.ingestFile);
 
 module.exports = router;

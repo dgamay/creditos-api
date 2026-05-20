@@ -19,7 +19,7 @@ const tenantMiddleware = (req, res, next) => {
     }
 
     // Validar formato básico (solo letras, números y guiones)
-    const tenantRegex = /^[a-zA-Z0-9\-]+$/;
+    const tenantRegex = /^[a-zA-Z0-9\-_]+$/;
     if (!tenantRegex.test(tenantId)) {
         return res.status(400).json({ 
             error: 'El formato del tenant no es válido. Use solo letras, números y guiones' 

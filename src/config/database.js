@@ -28,7 +28,7 @@ const getTenantConnection = async (tenantId) => {
 
         // Construir el nombre de la base de datos para este tenant
         // Formato: [tenantId]_db  (ej: empresa1_db)
-        const dbName = `${tenantId}_db`;
+        const dbName = `${tenantId}`;
         
         // Obtener la URI base desde .env (sin el nombre de la BD)
         const baseUri = process.env.MONGO_URI;

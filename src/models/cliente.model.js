@@ -27,6 +27,19 @@ const clienteSchema = new mongoose.Schema({
         required: [true, 'El celular es obligatorio'],
         trim: true
     },
+    
+    // ✅ NUEVO: Embedding vectorial para búsqueda semántica
+    descripcion_vectorial: {
+        type: [Number],  // Array de números (vectores)
+        default: null
+    },
+    
+    // ✅ NUEVO: Datos adicionales para generar el embedding
+    perfil_cliente: {
+        type: String,  // Descripción en texto plano para generar vector
+        default: null
+    },
+
     cobrador_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Cobrador',

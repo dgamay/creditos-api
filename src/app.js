@@ -42,6 +42,7 @@ app.use('/api/cobradores', require('./routes/cobrador.routes'));
 app.use('/api/clientes', require('./routes/cliente.routes'));
 app.use('/api/creditos', require('./routes/credito.routes'));
 // Webhook de Telegram — sin middlewares de tenant ni admin
+app.use('/api/conocimiento', require('./routes/conocimiento.routes'));
 
 app.use((err, req, res, next) => {
   console.error('🔥 Error no manejado:', err);

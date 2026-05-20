@@ -9,6 +9,8 @@
 
 const getEmpresaModel = require('../models/empresa.model');
 const { getAdminConnection, getTenantConnection } = require('../config/database');
+const { ingestDocument } = require('../services/ingestion.service');
+const { getTenantConnection } = require('../config/database');
 
 // ============================================
 // VERIFICAR ACCESO ADMIN
@@ -230,4 +232,39 @@ exports.getStats = async (req, res) => {
     console.error('❌ Error al obtener estadísticas:', error);
     res.status(500).json({ error: error.message });
   }
+};
+
+exports.ingestFile = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'Debes adjuntar un archivo' });
+        }
+
+        // El administrador debe indicar a qué tenant pertenece el documento
+        const tenantId = req.headers['x-tenant-id'];
+        if (!tenantId || !/^[a-zA-Z0-9_-]+$/.test(tenantId)) {
+            return res.status(400).json({ error: 'Header X-Tenant-ID inválido o faltante' });
+        }
+
+        const connection = await getTenantConnection(tenantId);
+        const { titulo, categoria } = req.body;
+
+        const fileInfo = {
+            buffer: req.file.buffer,
+            mimetype: req.file.mimetype,
+            originalname: req.file.originalname
+        };
+
+        const result = await ingestDocument(connection, fileInfo, { titulo, categoria });
+
+        res.json({
+            success: true,
+            documentId: result.doc._id,
+            titulo: result.doc.titulo,
+            chunks: result.totalChunks
+        });
+    } catch (error) {
+        console.error('❌ Error en ingesta:', error);
+        res.status(500).json({ error: error.message });
+    }
 };
