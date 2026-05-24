@@ -897,6 +897,13 @@ return res.sendStatus(200);
       }
       return res.sendStatus(200);
     }
+    // ── Si el mensaje NO es un comando y el usuario NO está vinculado,
+    //     igualmente intentamos responder con la base de conocimiento
+    if (!texto.startsWith('/') && sesion.paso !== PASOS.VINCULADO) {
+      // Tenant por defecto; si quieres que usuarios no vinculados consulten
+      await responderConConocimiento(chatId, 'empresa1_db', texto);
+      return res.sendStatus(200);
+    }
 
     // ============================================
     // COMANDOS — requieren estar vinculado como cobrador
