@@ -433,6 +433,22 @@ exports.procesarMensaje = async (req, res) => {
     console.log(`📨 Chat ${chatId}: "${texto}" | Paso: ${sesion.paso}`);
 
     // ============================================
+    // COMANDO /reiniciar — vuelve al inicio desde cualquier estado
+    // ============================================
+    if (texto === '/reiniciar' || texto === '/cancelar') {
+      // Borrar la sesión actual
+      delete sesiones[chatId];
+      // Volver a mostrar el mensaje de bienvenida
+      await telegramService.responder(chatId,
+        '🔄 <b>Sesión reiniciada</b>\n\n' +
+        'Bienvenido de nuevo a Credirobo Bot.\n' +
+        'Usa /start para vincularte como cobrador o /adminstart para administrador.\n' +
+        'También puedes escribir directamente una pregunta sobre créditos.'
+      );
+      return res.sendStatus(200);
+    }
+
+    // ============================================
     // COMANDO /start — vinculación cobrador
     // ============================================
     if (texto === '/start') {
