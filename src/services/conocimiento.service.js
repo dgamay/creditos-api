@@ -1,4 +1,4 @@
-const getConocimientoModel = require('../models/conocimiento.model');
+const { getConocimientoModel, getChunkModel } = require('../models/conocimiento.model');
 const { generarEmbedding } = require('../utils/embeddings');
 
 /**
