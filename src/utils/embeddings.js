@@ -1,5 +1,5 @@
 // utils/embeddings.js
-const { pipeline } = require('@xenova/transformers');
+const { pipeline } = await import('@xenova/transformers'); //  funciona en cualquier lado
 
 let embedder = null;
 
