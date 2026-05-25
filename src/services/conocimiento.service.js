@@ -36,14 +36,22 @@ async function buscarConocimiento(connection, texto, opciones = {}) {
     const documentosIds = resultadosChunks.map(r => r._id);
     let filtroDoc = { _id: { $in: documentosIds } };
 
-    // Filtro de visibilidad
-    if (opciones.role === 'admin') {
-        // admin ve todo (no añadimos filtro extra)
-    } else if (opciones.role === 'cobrador') {
-        filtroDoc.visibilidad = { $in: ['todos', 'cobrador'] };
+        // Filtro de visibilidad
+    const role = opciones.role || 'anonimo';
+    if (role === 'admin') {
+        // admin ve todo, no se añade filtro
+    } else if (role === 'cobrador') {
+        // cobrador ve 'todos' + 'cobrador' + documentos sin el campo
+        filtroDoc.$or = [
+            { visibilidad: { $in: ['todos', 'cobrador'] } },
+            { visibilidad: { $exists: false } }
+        ];
     } else {
-        // usuario no vinculado: solo ve 'todos'
-        filtroDoc.visibilidad = 'todos';
+        // usuario anónimo ve 'todos' + documentos sin el campo
+        filtroDoc.$or = [
+            { visibilidad: 'todos' },
+            { visibilidad: { $exists: false } }
+        ];
     }
 
     const documentos = await Conocimiento.find(filtroDoc);
