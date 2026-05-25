@@ -380,7 +380,19 @@ const procesarCallback = async (callbackQuery) => {
 const responderConConocimiento = async (chatId, tenantId, query) => {
   try {
     const connection = await getTenantConnection(tenantId);
-    const resultados = await buscarConocimiento(connection, query, { limit: 3 });
+
+    // Determinar el rol según la sesión
+    const sesion = sesiones[chatId];
+    let role = 'anonimo';
+    if (sesion) {
+      if (sesion.paso === PASOS.VINCULADO) {
+        role = 'cobrador';
+      } else if (sesion.paso === PASOS.ADMIN_VINCULADO) {
+        role = 'admin';
+      }
+    }
+
+    const resultados = await buscarConocimiento(connection, query, { limit: 3, role });
 
     if (!resultados || resultados.length === 0) {
       await telegramService.responder(chatId,
@@ -393,7 +405,6 @@ const responderConConocimiento = async (chatId, tenantId, query) => {
     let respuesta = `<b>📚 ${mejor.titulo}</b>\n`;
 
     if (mejor.chunks_relevantes && mejor.chunks_relevantes.length > 0) {
-      // Tomamos el chunk más relevante
       respuesta += mejor.chunks_relevantes[0].contenido.substring(0, 400) + '…';
     } else if (mejor.contenido) {
       respuesta += mejor.contenido.substring(0, 400) + '…';

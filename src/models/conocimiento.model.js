@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const documentoSchema = new mongoose.Schema({
     titulo:    { type: String, required: true, trim: true },
     categoria: { type: String, enum: ['política', 'faq', 'manual', 'otro'], default: 'otro' },
+    visibilidad: { type: String, enum: ['todos', 'cobrador', 'admin'], default: 'todos' },
     metadata:  { type: mongoose.Schema.Types.Mixed }
 }, { timestamps: true, versionKey: false });
 
